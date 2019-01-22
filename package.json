@@ -1,0 +1,33 @@
+{
+  "name": "anynode",
+  "version": "0.0.1",
+  "author": "zisu",
+  "description": "test anywhere / node static web server",
+  "main": "build/index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "fix": "eslint --fix ."
+  },
+  "pre-commit": [
+    "fix",
+    "lint"
+  ],
+  "keywords": [
+    "node.js",
+    "javascript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://path/to/url"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.12.1",
+    "pre-commit": "^1.2.2"
+  }
+}
