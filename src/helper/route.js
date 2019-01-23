@@ -6,12 +6,12 @@ const stat = promisify(fs.stat);
 const readdir = promisify(fs.readdir);
 const config = require('../config/defaultConfig');
 const mime = require('./mime');
+const compress = require('./compress');
 
 
 const tplPath = path.join(__dirname,'../template/dir.tpl');
 const source = fs.readFileSync(tplPath);//这里指定为utf-8读取速度更慢
 const template = Handlebars.compile(source.toString())
-
 module.exports = async function(req,res,filePath){
   try {
     const stats = await stat(filePath);//所有的await要包裹在async内
@@ -23,7 +23,11 @@ module.exports = async function(req,res,filePath){
       // fs.readFile(filePath, (err, res)=>{
       //   res.end(res);
       // });
-      fs.createReadStream(filePath).pipe(res);
+      let rs = fs.createReadStream(filePath);
+      if(filePath.match(config.compress)){
+        rs = compress(rs,req,res);
+      }
+      rs.pipe(res);
     } else if (stats.isDirectory()) {
       const files = await readdir(filePath);//不加上await会返回promise，而不是正确的返回值
       res.statusCode = 200;
