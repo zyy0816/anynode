@@ -5,6 +5,7 @@ const promisify = require('util').promisify;
 const stat = promisify(fs.stat);
 const readdir = promisify(fs.readdir);
 const config = require('../config/defaultConfig');
+const mime = require('./mime');
 
 
 const tplPath = path.join(__dirname,'../template/dir.tpl');
@@ -15,8 +16,9 @@ module.exports = async function(req,res,filePath){
   try {
     const stats = await stat(filePath);//所有的await要包裹在async内
     if (stats.isFile()) {
+      const contentType = mime(filePath);
       res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/plain');
+      res.setHeader('Content-Type', contentType);
       //速度慢，不建议使用
       // fs.readFile(filePath, (err, res)=>{
       //   res.end(res);
@@ -30,7 +32,12 @@ module.exports = async function(req,res,filePath){
       const data = {
         titlle: path.basename(filePath),
         dir: dir ? `/${dir}` : '',
-        files
+        files: files.map(file=>{
+          return {
+            file,
+            icon:mime(file)
+          }
+        })
       }
       res.end(template(data));
     }
