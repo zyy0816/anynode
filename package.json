@@ -1,9 +1,9 @@
 {
   "name": "anynode",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "author": "zisu",
   "description": "test anywhere / node static web server",
-  "main": "build/index.js",
+  "main": "src/app.js",
   "scripts": {
     "lint": "eslint .",
     "fix": "eslint --fix ."
@@ -12,6 +12,9 @@
     "fix",
     "lint"
   ],
+  "bin": {
+    "anynode": "bin/anynode"
+  },
   "keywords": [
     "node.js",
     "javascript"
@@ -24,7 +27,11 @@
   "engines": {
     "node": "0.10.x"
   },
-  "dependencies": {},
+  "dependencies": {
+    "yargs": "^12.0.5",
+    "handlebars": "^4.0.10",
+    "chalk": "^2.4.2"
+  },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "eslint": "^5.12.1",

@@ -4,16 +4,17 @@ const Handlebars = require('handlebars');
 const promisify = require('util').promisify;
 const stat = promisify(fs.stat);
 const readdir = promisify(fs.readdir);
-const config = require('../config/defaultConfig');
+// const config = require('../config/defaultConfig');
 const mime = require('./mime');
 const compress = require('./compress');
 const range = require('./range');
+const isFresh = require('./cache');
 
 
 const tplPath = path.join(__dirname,'../template/dir.tpl');
 const source = fs.readFileSync(tplPath);//这里指定为utf-8读取速度更慢
 const template = Handlebars.compile(source.toString())
-module.exports = async function(req,res,filePath){
+module.exports = async function(req,res,filePath,config){
   try {
     const stats = await stat(filePath);//所有的await要包裹在async内
     if (stats.isFile()) {
@@ -24,6 +25,12 @@ module.exports = async function(req,res,filePath){
       // fs.readFile(filePath, (err, res)=>{
       //   res.end(res);
       // });
+      if(isFresh(stats,req,res)){
+        res.statusCode = 304;
+        res.end();
+        return;
+      }
+
       let rs;
       const {code,start,end} = range(stats.size,req,res);
       if(code === 200){
